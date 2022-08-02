@@ -2,6 +2,8 @@
 
 A simple Roam Research extension that displays and numbers your recent page and block visits in a bar along the top of your graph.
 
+__This extension can be installed using Roam Depot. It does not manipulate your notes in any way.__
+
 ### How to use:
     - Click green arrow (‣):                    Turns breadcrumb display on/off
     - Click link:                               Open page/block in main window
@@ -13,17 +15,13 @@ Index 0 is your current page. If you revisit the a page that is already in your 
 
 The top bar has a max width, but when it overflows, it is horizontally scrollable using the mousewheel. Currently, the extension displays your last 15 page/block visits. 
 
-If recent visit is a page, the recent link will display as that page's title, truncated to 25 characters.
+- If recent visit is a page, the recent link will display as that page's title, truncated to 25 characters.
+- If recent visit is your daily notes, the recent link will display as "Daily Notes", prefixed with an orange ✹.
+- If recent visit is a focused block, the recent link will display as that block's content, truncated to 20 characters and prefixed with a blue 🞇.
 
-If recent visit is your daily notes, the recent link will display as "Daily Notes", prefixed with an orange ✹.
+### Demo:
 
-If recent visit is a focused block, the recent link will display as that block's content, truncated to 20 characters and prefixed with a blue 🞇.
-
-This extension can be installed using Roam Depot. It does not manipulate your notes in any way.
-
-Demo:
-
-COMING SOON
+__COMING SOON__
 
 CSS to target if manually styling:
 `#recentLinks`
@@ -40,3 +38,4 @@ CSS to target if manually styling:
   * customizable hotkeys to trigger links
   * customizable styling for the top bar
 - add ability to open links in sidebar using hotkeys only (no clicks)
+- add button for clearing recents completely

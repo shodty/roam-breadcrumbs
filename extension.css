@@ -39,3 +39,11 @@
 .toggledOff {
   color: gray;
 }
+#dailyIcon {
+  color: #FF5E00;
+}
+
+
+#focusedIcon {
+  color: #0D9BDB;
+}
