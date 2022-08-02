@@ -2,10 +2,11 @@
   position: absolute;
   left: 86px;
   height: 40px;
-    width: 62%;
+  width: 62%;
   padding: 10px;
   display: flex;
   overflow-x: scroll;
+    transition: width .3s ease;
 }
 
 #closeCrumbs {
@@ -46,4 +47,9 @@
 
 #focusedIcon {
   color: #0D9BDB;
+}
+/* prevent overlap of search bar & default roam icons */
+.rm-find-or-create-wrapper,
+.rm-topbar .bp3-popover-wrapper {
+  z-index: 1000;
 }

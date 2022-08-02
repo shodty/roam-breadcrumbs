@@ -1,3 +1,7 @@
+/****************************************/
+/*     Roam Breadcrumbs by ✹shodty     */
+/****************************************/
+
 var graphName = window.roamAlphaAPI.graph.name;
 var recentLinksDiv, toggleButton, toggleDiv, topBarDiv;
 var urlArray = [];      // array of strings that holds the UIDs of breadcrumbs
@@ -7,10 +11,13 @@ var linksToTrack = 16;  // number of breadcrumbs to display in top bar
 
 // onload function adds listener for hotkey presses and url hash changes
 function onload() {
+    onunload();
     window.addEventListener("keyup", hotKeyEvent);
     window.onhashchange = e => setTimeout(addPageToRecent, 250);
     createDivs();
 }
+
+setInterval(checkSidebar, 1000);
 
 // creates divs to hold breadcrumbs, as well as toggle button to turn breadcrumbs on/off
 function createDivs() {
@@ -76,12 +83,11 @@ async function addPageToRecent() {
 
 function createLinkElement(pageUrl) {
     var innerChild, linkElement;
-    var blockType = checkBlockType(pageUrl).type;
 
     // checks if current page is daily notes, a page, or a focused block. creates a name string to place inside <a> link element
-    if (checkIfDailyNotes()) { var innerChild = "<span id='dailyIcon'>✹</span> Daily Notes" }
-    else if (blockType == 'page') { innerChild = getPageName(pageUrl).substring(0, 25) }
-    else if (blockType == 'block') { innerChild = "<span id='focusedIcon'>🞇</span> " + getPageName(pageUrl).substring(0, 20) }
+    if (pageUrl == '/') { innerChild = "<span id='dailyIcon'>✹</span> Daily Notes" }
+    else if (checkBlockType(pageUrl).type == 'page') { innerChild = getPageName(pageUrl).substring(0, 25) }
+    else if (checkBlockType(pageUrl).type == 'block') { innerChild = "<span id='focusedIcon'>🞇</span> " + getPageName(pageUrl).substring(0, 20) }
     //add <a> element to array, with unique id and click function that prevents hijacks default navigation and uses openLink/openDaily functions instead
     if (!checkIfDailyNotes()) {
         linkElement = "<a id='" + pageUrl + "'href='javascript:;' class='recentLink' onclick='openLink(event);return false;'>" + innerChild + "</a>";
@@ -106,8 +112,8 @@ function createLinkElement(pageUrl) {
 
 //function referenced in the onclick for all <a> breadcrumb elements in the top bar except daily notes, see openDaily()
 function openLink(ev) {
-    //open link in right sidebar using Roam API if user ctrl+clicks link
-    if (ev.ctrlKey == true) {
+    //open link in right sidebar using Roam API if user shift+clicks link
+    if (ev.shiftKey == true) {
         window.roamAlphaAPI.ui.rightSidebar.addWindow({ window: { type: 'outline', 'block-uid': ev.srcElement.id } });
     }
     //open link in main window using Roam API if user clicks link
@@ -123,15 +129,18 @@ async function openDaily() {
 
 //hotkeys for jumping to breadcrumbs, ctrl or alt modifier can be used, + the breadcrumb index
 function hotKeyEvent(zEvent) {
-    if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "1") { goToLink(1); }
-    if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "2") { goToLink(2); }
-    if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "3") { goToLink(3); }
-    if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "4") { goToLink(4); }
-    if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "5") { goToLink(5); }
-    if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "6") { goToLink(6); }
-    if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "7") { goToLink(7); }
-    if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "8") { goToLink(8); }
-    if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "9") { goToLink(9); }
+    //first make sure ctrl + alt aren't being pressed simultaneously,as this could mean the user is trying to use the 'make heading' default roam shortcut
+    if (!(zEvent.altKey && zEvent.ctrlKey)) {
+        if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "1") { goToLink(1); }
+        if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "2") { goToLink(2); }
+        if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "3") { goToLink(3); }
+        if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "4") { goToLink(4); }
+        if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "5") { goToLink(5); }
+        if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "6") { goToLink(6); }
+        if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "7") { goToLink(7); }
+        if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "8") { goToLink(8); }
+        if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "9") { goToLink(9); }
+    }
 }
 
 async function goToLink(n) {
@@ -166,6 +175,12 @@ function checkIfDailyNotes() {
     return (graphName == window.location.href.substring(window.location.href.length - graphName.length));
 }
 
+function checkSidebar() {
+    var elementExists = document.getElementsByClassName("rm-resize-handle");
+    if (elementExists[0] == null) { recentLinksDiv.style.width = '62%'; }
+    else if (elementExists[0] != null) { recentLinksDiv.style.width = '35%'; }
+}
+
 //remove listeners and remove html elements added to the dom
 function onunload() {
 	window.removeEventListener("keyup", hotKeyEvent);
@@ -175,8 +190,7 @@ function onunload() {
     if(btn != null) { btn.parentNode.removeChild(btn); }
 }
 
-
 export default {
     onload,
     onunload
-  };
+};
