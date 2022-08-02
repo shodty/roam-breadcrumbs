@@ -28,7 +28,7 @@ The top bar has a max width, but when it overflows, it is horizontally scrollabl
 
 ### Demo:
 
-<video src="https://github.com/shodty/readme-dia/blob/1b36afce62f7ed1bdb734db2e88f7027f32fad7e/video/demo.mp4" controls="controls"></video>
+<video src="https://shodty.github.io/video/demo.mp4" controls="controls"></video>
 
 CSS to target if manually styling:
 `#recentLinks`
