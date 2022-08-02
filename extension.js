@@ -34,6 +34,7 @@ function createDivs() {
     toggleButton = document.createElement("button");
     toggleButton.id = 'toggleButton';
     toggleButton.innerHTML = "‣";
+    toggleButton.classList.add("toggledOn");
     toggleDiv.appendChild(toggleButton);
     toggleButton.onclick = toggleCrumbs;
     addPageToRecent();
@@ -44,10 +45,12 @@ function toggleCrumbs() {
     crumbsOn = !crumbsOn;
     if (!crumbsOn) {
         recentLinksDiv.style.display = 'none';
-        toggleButton.style.color = 'gray';
+        toggleButton.classList.remove("toggledOn");
+        toggleButton.classList.add("toggledOff");
     } else {
-        recentLinksDiv.style.display = 'block';
-        toggleButton.style.color = 'green';
+        recentLinksDiv.style.display = 'flex';
+        toggleButton.classList.remove("toggledOff");
+        toggleButton.classList.add("toggledOn");
     }
 }
 

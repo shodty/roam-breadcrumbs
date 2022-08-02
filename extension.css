@@ -1,23 +1,22 @@
 #recentLinks {
   position: absolute;
   left: 86px;
-    height: 40px;
+  height: 40px;
     width: 62%;
   padding: 10px;
   display: flex;
-    overflow-x: scroll;
+  overflow-x: scroll;
 }
 
 #closeCrumbs {
   position: absolute;
-    left: 60px;
+  left: 60px;
     height: 40px;
     padding: 10px;
 }
 
 #toggleButton {
   border: 0;
-  color: green;
   font-size: 24px;
   background: transparent;
 }
@@ -32,4 +31,11 @@
 .linkNumber {
   color: #0087FF;
   padding-right: 3px;
+}
+.toggledOn {
+  color: green;
+}
+
+.toggledOff {
+  color: gray;
 }
