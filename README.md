@@ -1,8 +1,8 @@
 # roam-breadcrumbs
-
+_v1.01_
 A simple Roam Research extension that displays and numbers your recent page and block visits in a bar along the top of your graph.
 
-__This extension can be installed using Roam Depot. It does not manipulate your notes in any way.__
+_This extension can be installed using Roam Depot. It does not manipulate your notes in any way._
 
 ### How to use:
     - Click green arrow (‣):                    Turns breadcrumb display on/off
@@ -14,7 +14,7 @@ __This extension can be installed using Roam Depot. It does not manipulate your 
 Vanilla styling:
 <img src="https://github.com/shodty/readme-dia/blob/1b36afce62f7ed1bdb734db2e88f7027f32fad7e/image/DxIXksBeFO.png"></img>
 
-Styled with Dark Age:
+Styled with [Dark Age](https://github.com/shodty/Roam_Dark_Age):
 <img src="https://github.com/shodty/readme-dia/blob/1b36afce62f7ed1bdb734db2e88f7027f32fad7e/image/ruxYS5u8fu.png"></img>
 
 

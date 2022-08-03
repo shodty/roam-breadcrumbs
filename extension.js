@@ -1,5 +1,6 @@
 /****************************************/
 /*     Roam Breadcrumbs by ✹shodty     */
+/*                v1.01                 */
 /****************************************/
 
 var graphName;
@@ -128,34 +129,22 @@ function createLinkElement(pageUrl) {
 //function referenced in the onclick for all <a> breadcrumb elements in the top bar except daily notes, see openDaily()
 function openLink(ev) {
     //open link in right sidebar using Roam API if user shift+clicks link
-    if (ev.shiftKey == true) {
-        window.roamAlphaAPI.ui.rightSidebar.addWindow({ window: { type: 'outline', 'block-uid': ev.srcElement.id } });
-    }
+    if (ev.shiftKey == true) { window.roamAlphaAPI.ui.rightSidebar.addWindow({ window: { type: 'outline', 'block-uid': ev.srcElement.id } }); }
     //open link in main window using Roam API if user clicks link
-    else {
-        window.roamAlphaAPI.ui.mainWindow.openPage({ page: { uid: ev.srcElement.id } });
-    }
+    else { window.roamAlphaAPI.ui.mainWindow.openPage({ page: { uid: ev.srcElement.id } }); }
 }
 
 //function referenced in the onclick for 'daily notes' <a> breadcrumb element
-async function openDaily() {
-    await window.roamAlphaAPI.ui.mainWindow.openDailyNotes()
-}
+async function openDaily() { await window.roamAlphaAPI.ui.mainWindow.openDailyNotes() }
 
+function openGraph() { location.href = graphURL + "/graph"; }
 
-function openGraph() {
-    var url = graphURL + "/graph";
-    location.href = url;
-}
-
-function openSearch() {
-    var url = graphURL + "/search";
-    location.href = url;
-}
+function openSearch() { location.href = graphURL + "/search"; }
 
 //hotkeys for jumping to breadcrumbs, ctrl or alt modifier can be used, + the breadcrumb index
 function hotKeyEvent(zEvent) {
-    //first make sure ctrl + alt aren't being pressed simultaneously,as this could mean the user is trying to use the 'make heading' default roam shortcut
+    //first make sure ctrl + alt aren't being pressed simultaneously, as this could mean the user is trying to use the 'make heading' default roam shortcut.
+    //if not, then use hotkey press to navigate to appropriate link index
     if (!(zEvent.altKey && zEvent.ctrlKey)) {
         if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "1") { goToLink(1); }
         if ((zEvent.altKey || zEvent.ctrlKey) && zEvent.key === "2") { goToLink(2); }
@@ -171,16 +160,14 @@ function hotKeyEvent(zEvent) {
 
 async function goToLink(n) {
     var linkToClick = urlArray[n];
-    // check if link is to the daily notes page, then call appropriate API function to navigate
-    if (linkToClick == '/') { await window.roamAlphaAPI.ui.mainWindow.openDailyNotes(); }
+    // check if link is to the daily notes, graph, search, or block/page, then call appropriate function to navigate
+    if (linkToClick == '/') { await openDaily() }
     else if (linkToClick == 'graph') { openGraph(); }
     else if (linkToClick == 'search') { openSearch(); }
     else if (linkToClick != null) { window.roamAlphaAPI.ui.mainWindow.openPage({ page: { uid: urlArray[n] } }); }
 }
 
-async function getUid() {
-    return await window.roamAlphaAPI.ui.mainWindow.getOpenPageOrBlockUid();
-}
+async function getUid() { return await window.roamAlphaAPI.ui.mainWindow.getOpenPageOrBlockUid(); }
 
 //checks if uid is for a page or a focused block, returns a string stating type 'page' or 'block', as well as the block object with all attributes
 function checkBlockType(uid) {
@@ -199,17 +186,11 @@ function getPageName(uid) {
     return name;
 }
 
-function checkIfDailyNotes() {
-    return (graphName == window.location.href.substring(window.location.href.length - graphName.length));
-}
+function checkIfDailyNotes() { return (graphName == window.location.href.substring(window.location.href.length - graphName.length)); }
 
-function checkIfGraph() {
-    return ('graph' == window.location.href.substring(window.location.href.length - 5));
-}
+function checkIfGraph() { return ('graph' == window.location.href.substring(window.location.href.length - 5)); }
 
-function checkIfSearch() {
-    return ('search' == window.location.href.substring(window.location.href.length - 6));
-}
+function checkIfSearch() { return ('search' == window.location.href.substring(window.location.href.length - 6)); }
 
 function checkSidebar() {
     var elementExists = document.getElementsByClassName("rm-resize-handle");
