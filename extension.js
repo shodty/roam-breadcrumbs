@@ -2,23 +2,26 @@
 /*     Roam Breadcrumbs by ✹shodty     */
 /****************************************/
 
-var graphName = window.roamAlphaAPI.graph.name;
+var graphName;
+var graphURL;
 var recentLinksDiv, toggleButton, toggleDiv, topBarDiv;
 var urlArray = [];      // array of strings that holds the UIDs of breadcrumbs
 var linksArray = [];    // holds array of html strings, <a> link elements, to be displayed in top bar
 var crumbsOn = true;    // toggle to display/track breadcrumbs
 var linksToTrack = 16;  // number of breadcrumbs to display in top bar
+var sidebarCheck;
 
 // onload function adds listener for hotkey presses and url hash changes
 function onload() {
     onunload();
+    //temporary fix to adjust bar width if sidebar open/closed
+    sidebarCheck = setInterval(checkSidebar, 1000);
+    graphName = window.roamAlphaAPI.graph.name;
+    graphURL = 'https://roamresearch.com/#/app/' + graphName;
     window.addEventListener("keyup", hotKeyEvent);
     window.onhashchange = e => setTimeout(addPageToRecent, 250);
     createDivs();
 }
-
-//temporary fix to adjust bar width if sidebar open/closed
-setInterval(checkSidebar, 1000);
 
 // creates divs to hold breadcrumbs, as well as toggle button to turn breadcrumbs on/off
 function createDivs() {
@@ -66,10 +69,12 @@ function toggleCrumbs() {
 async function addPageToRecent() {
     //check if breadcrumbs is toggled on
     if (crumbsOn) {
-        var pageUrl = '/'; //daily notes page
-        if (!checkIfDailyNotes()) {
-            pageUrl = await getUid(); //replace pageUrl with page/block uid if not on daily notes page
-        }
+        var pageUrl; //daily notes page
+        if (checkIfDailyNotes()) { pageUrl = '/'; }
+        else if (checkIfGraph()) { pageUrl = 'graph'; }
+        else if (checkIfSearch()) { pageUrl = 'search'; }
+        //replace pageUrl with page/block uid if not on daily notes, graph, or search page
+        else { pageUrl = await getUid(); }
         if (urlArray.slice(0, linksToTrack).includes(pageUrl) == false) { //checks if the link already exists in the last 16 links
             createLinkElement(pageUrl);
         }
@@ -87,15 +92,24 @@ function createLinkElement(pageUrl) {
 
     // checks if current page is daily notes, a page, or a focused block. creates a name string to place inside <a> link element
     if (pageUrl == '/') { innerChild = "<span id='dailyIcon'>✹</span> Daily Notes" }
+    else if (pageUrl == 'graph') { innerChild = "<span id='graphIcon'>🕸️</span> Graph" }
+    else if (pageUrl == 'search') { innerChild = "<span id='searchIcon'>🔎</span> Search" }
     else if (checkBlockType(pageUrl).type == 'page') { innerChild = getPageName(pageUrl).substring(0, 25) }
     else if (checkBlockType(pageUrl).type == 'block') { innerChild = "<span id='focusedIcon'>🞇</span> " + getPageName(pageUrl).substring(0, 20) }
     //add <a> element to array, with unique id and click function that prevents hijacks default navigation and uses openLink/openDaily functions instead
-    if (!checkIfDailyNotes()) {
-        linkElement = "<a id='" + pageUrl + "'href='javascript:;' class='recentLink' onclick='openLink(event);return false;'>" + innerChild + "</a>";
-    }
-    else {
+    if (pageUrl == '/') {
         linkElement = "<a id='daily-notes' 'href='javascript:;' class='recentLink' onclick='openDaily();return false;'>" + innerChild + "</a>";
     }
+    else if (pageUrl == 'graph') {
+        linkElement = "<a id='graph-crumb' 'href='javascript:;' class='recentLink' onclick='openGraph();return false;'>" + innerChild + "</a>";
+    }
+    else if (pageUrl == 'search') {
+        linkElement = "<a id='search-crumb' 'href='javascript:;' class='recentLink' onclick='openSearch();return false;'>" + innerChild + "</a>";
+    }
+    else {
+        linkElement = "<a id='" + pageUrl + "'href='javascript:;' class='recentLink' onclick='openLink(event);return false;'>" + innerChild + "</a>";
+    }
+
     //unshift adds most recent element to beginning of respective arrays
     urlArray.unshift(pageUrl);  
     linksArray.unshift(linkElement);
@@ -128,6 +142,17 @@ async function openDaily() {
     await window.roamAlphaAPI.ui.mainWindow.openDailyNotes()
 }
 
+
+function openGraph() {
+    var url = graphURL + "/graph";
+    location.href = url;
+}
+
+function openSearch() {
+    var url = graphURL + "/search";
+    location.href = url;
+}
+
 //hotkeys for jumping to breadcrumbs, ctrl or alt modifier can be used, + the breadcrumb index
 function hotKeyEvent(zEvent) {
     //first make sure ctrl + alt aren't being pressed simultaneously,as this could mean the user is trying to use the 'make heading' default roam shortcut
@@ -148,6 +173,8 @@ async function goToLink(n) {
     var linkToClick = urlArray[n];
     // check if link is to the daily notes page, then call appropriate API function to navigate
     if (linkToClick == '/') { await window.roamAlphaAPI.ui.mainWindow.openDailyNotes(); }
+    else if (linkToClick == 'graph') { openGraph(); }
+    else if (linkToClick == 'search') { openSearch(); }
     else if (linkToClick != null) { window.roamAlphaAPI.ui.mainWindow.openPage({ page: { uid: urlArray[n] } }); }
 }
 
@@ -176,6 +203,14 @@ function checkIfDailyNotes() {
     return (graphName == window.location.href.substring(window.location.href.length - graphName.length));
 }
 
+function checkIfGraph() {
+    return ('graph' == window.location.href.substring(window.location.href.length - 5));
+}
+
+function checkIfSearch() {
+    return ('search' == window.location.href.substring(window.location.href.length - 6));
+}
+
 function checkSidebar() {
     var elementExists = document.getElementsByClassName("rm-resize-handle");
     if (elementExists[0] == null) { recentLinksDiv.style.width = '62%'; }
@@ -184,6 +219,7 @@ function checkSidebar() {
 
 //remove listeners and remove html elements added to the dom
 function onunload() {
+    clearInterval(sidebarCheck);
 	window.removeEventListener("keyup", hotKeyEvent);
     var elem = document.querySelector('#recentLinks');
     var btn = document.querySelector('#closeCrumbs');
