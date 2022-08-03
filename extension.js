@@ -17,6 +17,7 @@ function onload() {
     createDivs();
 }
 
+//temporary fix to adjust bar width if sidebar open/closed
 setInterval(checkSidebar, 1000);
 
 // creates divs to hold breadcrumbs, as well as toggle button to turn breadcrumbs on/off
