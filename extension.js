@@ -14,7 +14,7 @@ var sidebarCheck;
 
 // onload function adds listener for hotkey presses and url hash changes
 function onload() {
-    onunload();
+    //onunload();
     //temporary fix to adjust bar width if sidebar open/closed
     sidebarCheck = setInterval(checkSidebar, 1000);
     graphName = window.roamAlphaAPI.graph.name;
@@ -99,16 +99,16 @@ function createLinkElement(pageUrl) {
     else if (checkBlockType(pageUrl).type == 'block') { innerChild = "<span id='focusedIcon'>🞇</span> " + getPageName(pageUrl).substring(0, 20) }
     //add <a> element to array, with unique id and click function that prevents hijacks default navigation and uses openLink/openDaily functions instead
     if (pageUrl == '/') {
-        linkElement = "<a id='daily-notes' 'href='javascript:;' class='recentLink' onclick='openDaily();return false;'>" + innerChild + "</a>";
+        linkElement = "<a id='daily-notes' class='recentLink'>" + innerChild + "</a>";
     }
     else if (pageUrl == 'graph') {
-        linkElement = "<a id='graph-crumb' 'href='javascript:;' class='recentLink' onclick='openGraph();return false;'>" + innerChild + "</a>";
+        linkElement = "<a id='graph-crumb' class='recentLink'>" + innerChild + "</a>";
     }
     else if (pageUrl == 'search') {
-        linkElement = "<a id='search-crumb' 'href='javascript:;' class='recentLink' onclick='openSearch();return false;'>" + innerChild + "</a>";
+        linkElement = "<a id='search-crumb' class='recentLink'>" + innerChild + "</a>";
     }
     else {
-        linkElement = "<a id='" + pageUrl + "'href='javascript:;' class='recentLink' onclick='openLink(event);return false;'>" + innerChild + "</a>";
+        linkElement = "<a id='" + pageUrl + "' class='recentLink'>" + innerChild + "</a>";
     }
 
     //unshift adds most recent element to beginning of respective arrays
@@ -120,9 +120,14 @@ function createLinkElement(pageUrl) {
     recentLinksDiv.innerHTML = linksArray.slice(0, linksToTrack).join("‣"); 
     var linkElements = document.getElementsByClassName("recentLink");
     //adds index number into the html of each breadcrumb displayed for ease of hotkey reference
-    for(i=0; i<linkElements.length; i++){
+    for (var i = 0; i < linkElements.length; i++) {
         var linkNumber = "<span class='linkNumber'>" + i.toString() + "</span>";
-        linkElements[i].innerHTML = linkNumber + linkElements[i].innerHTML;
+        var link = linkElements[i];
+        link.innerHTML = linkNumber + link.innerHTML;;
+        if (link.id == 'daily-notes') { link.onclick = openDaily; }
+        else if (link.id == 'graph-crumb') { link.onclick = openGraph; }
+        else if (link.id == 'search-crumb') { link.onclick = openSearch; }
+        else { link.onclick = openLink; }
     }
 }
 
@@ -209,6 +214,10 @@ function onunload() {
 }
 
 export default {
-    onload: onload(),
-    onunload: onunload()
+    onload: () => {
+        onload();
+    },
+    onunload: () => {
+        onunload();
+    }
 };
