@@ -209,6 +209,6 @@ function onunload() {
 }
 
 export default {
-    onload,
-    onunload
+    onload: onload(),
+    onunload: onunload()
 };
