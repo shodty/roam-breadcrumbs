@@ -1,6 +1,6 @@
 /****************************************/
 /*     Roam Breadcrumbs by ✹shodty     */
-/*                v1.01                 */
+/*                v1.02                 */
 /****************************************/
 
 var graphName;
@@ -11,18 +11,82 @@ var linksArray = [];    // holds array of html strings, <a> link elements, to be
 var crumbsOn = true;    // toggle to display/track breadcrumbs
 var linksToTrack = 16;  // number of breadcrumbs to display in top bar
 var sidebarCheck;
+var barMaxWidth = '60%';
+var barMinWidth = '30%';
+
+// actions that are predefined save there state automatically (except button) underneath the id provided for the action
+// custom actions can save state with extensionAPI.settings.set / get / getAll
+const panelConfig = {
+    tabTitle: "Roam Breadcrumbs",
+    settings: [
+        {
+            id: "total-breadcrumbs",
+            name: "Total Breadcrumbs",
+            description: "The maximum number of links tracked in the breadcrumbs bar",
+            action: {
+                type: "select",
+                items: [5, 10, 15, 25, 50, 100],
+                onChange: (evt) => {
+                    linksToTrack = evt + 1;
+                    displayLinks();
+                }
+            }
+        },
+        {
+            id: "bar-max-width",
+            name: "Top Bar Width Max",
+            description: "The width of the breadcrumbs bar when the right side panel is closed.",
+            action: {
+                type: "select",
+                items: ['65%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
+                onChange: (evt) => {
+                    barMaxWidth = evt;
+                }
+            }
+        },
+        {
+            id: "bar-min-width",
+            name: "Top Bar Width Min",
+            description: "The width of the breadcrumbs bar when the right side panel is open.",
+            action: {
+                type: "select",
+                items: ['35%', '10%', '20%', '30%', '40%', '50%', '60%', '70%', '80%', '90%', '100%'],
+                onChange: (evt) => {
+                    barMinWidth = evt;
+                }
+            }
+        }
+    ]
+};
+
 
 // onload function adds listener for hotkey presses and url hash changes
-function onload() {
+function onload({ extensionAPI }) {
     //onunload();
+    linksToTrack = extensionAPI.settings.get("total-breadcrumbs");
+    if (linksToTrack == null) { linksToTrack = 16; }
+    barMaxWidth = extensionAPI.settings.get("bar-max-width");
+    barMinWidth = extensionAPI.settings.get("bar-min-width");
+    extensionAPI.settings.panel.create(panelConfig);
     //temporary fix to adjust bar width if sidebar open/closed
     sidebarCheck = setInterval(checkSidebar, 1000);
     graphName = window.roamAlphaAPI.graph.name;
-    graphURL = 'https://roamresearch.com/#/app/' + graphName;
+    graphURL = setGraphUrl();
     window.addEventListener("keyup", hotKeyEvent);
     window.onhashchange = e => setTimeout(addPageToRecent, 250);
     createDivs();
 }
+
+function setGraphUrl() {
+    console.log(window.roamAlphaAPI.graph.type);
+    if (window.roamAlphaAPI.graph.type === 'offline') {
+        return 'https://roamresearch.com/#/offline/' + graphName;
+    }
+    else {
+        return 'https://roamresearch.com/#/app/' + graphName;
+    }
+}
+
 
 // creates divs to hold breadcrumbs, as well as toggle button to turn breadcrumbs on/off
 function createDivs() {
@@ -114,12 +178,20 @@ function createLinkElement(pageUrl) {
     //unshift adds most recent element to beginning of respective arrays
     urlArray.unshift(pageUrl);  
     linksArray.unshift(linkElement);
-    //reduces the array of recent links to be displayed to number of links set at the top in linkToTrack variable
+    displayLinks();
+}
+
+//reduce the array of recent links to be displayed to number of links set at the top in linkToTrack variable
+function displayLinks() {
     linksArray = linksArray.slice(0, linksToTrack);
     //puts the <a> array into the recentLinksDiv
     recentLinksDiv.innerHTML = linksArray.slice(0, linksToTrack).join("‣"); 
+    numberLinks();
+}
+
+//add index number into the html of each breadcrumb displayed for ease of hotkey reference
+function numberLinks() {
     var linkElements = document.getElementsByClassName("recentLink");
-    //adds index number into the html of each breadcrumb displayed for ease of hotkey reference
     for (var i = 0; i < linkElements.length; i++) {
         var linkNumber = "<span class='linkNumber'>" + i.toString() + "</span>";
         var link = linkElements[i];
@@ -199,8 +271,8 @@ function checkIfSearch() { return ('search' == window.location.href.substring(wi
 
 function checkSidebar() {
     var elementExists = document.getElementsByClassName("rm-resize-handle");
-    if (elementExists[0] == null) { recentLinksDiv.style.width = '62%'; }
-    else if (elementExists[0] != null) { recentLinksDiv.style.width = '35%'; }
+    if (elementExists[0] == null) { recentLinksDiv.style.width = barMaxWidth }
+    else if (elementExists[0] != null) { recentLinksDiv.style.width = barMinWidth }
 }
 
 //remove listeners and remove html elements added to the dom
@@ -214,10 +286,6 @@ function onunload() {
 }
 
 export default {
-    onload: () => {
-        onload();
-    },
-    onunload: () => {
-        onunload();
-    }
+    onload: onload,
+    onunload: onunload
 };
