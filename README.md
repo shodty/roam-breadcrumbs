@@ -1,15 +1,16 @@
-# roam-breadcrumbs
+# blockcrumbs
 by <img src="https://user-images.githubusercontent.com/32799489/182765779-b0ca1c44-a272-4bbd-b85e-71fdb25ee39d.png"></img>
 
 
-_v1.02_
+_v1.03_
 A simple Roam Research extension that displays and numbers your recent page and block visits in a bar along the top of your graph for easy recall.
 
 
 _This extension can be installed using Roam Depot. It does not manipulate your notes in any way._
 
 ### How to use:
-    Click green arrow (‣):                    Turns breadcrumb display on/off
+    Click green arrow (🠶):                   Turns breadcrumb display on/off
+    Shift + Click green arrow (🠶):           Clears breadcrumbs except for current page
     Click breadcrumb:                         Open page/block in main window
     Shift + Click breadcrumb:                 Open page/block in right sidebar
     Ctrl + number (Ctrl + 1, Ctrl + 2, etc):  Hotkey to open link in main window
@@ -51,10 +52,7 @@ CSS to target if manually styling:
 ## Roadmap
 
 - make the options configurable by the user, namely:
-  * adjust the number of recent links displayed in top bar
-  * better top bar width control so as not to interfere with other top bar elements
   * change placement/layout of the recent links display (left sidebar?)
   * customizable hotkeys to trigger links
   * customizable styling for the top bar
 - add ability to open links in sidebar using hotkeys only (no clicks)
-- add button for clearing recents completely

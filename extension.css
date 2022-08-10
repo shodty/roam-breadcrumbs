@@ -26,6 +26,13 @@
   cursor: pointer;
   flex-shrink: 0;
   max-width: 100%;
+  user-select: none;
+    -ms-user-select: none;
+    /* IE 10+ */
+    -moz-user-select: none;
+    /* Gecko (Firefox) */
+    -webkit-user-select: none;
+    /* Webkit (Safari, Chrome) */
 }
 
 .linkNumber {
@@ -34,10 +41,20 @@
 }
 .toggledOn {
   color: green;
+  transition: color .3s ease;
+  }
+  
+  .toggledOn:hover {
+    color: rgb(181, 56, 22);
 }
 
 .toggledOff {
   color: gray;
+  transition: color .3s ease;
+  }
+  
+  .toggledOff:hover {
+    color: rgb(48, 129, 23);
 }
 #dailyIcon {
   color: #FF5E00;

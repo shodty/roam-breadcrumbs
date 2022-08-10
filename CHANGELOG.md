@@ -1,5 +1,8 @@
 ## Changelog
-
+- v1.03 (2022-08-06)
+  - Shift clicking the toggle button "🠶" now clears the link bar except for current page
+  - Hover colors added for toggle button "🠶"
+  - Prevented unwanted text selection of breadcrumbs when shift-clicking to open in right sidebar
 - v1.02 (2022-08-05)
   - Now works with offline graphs
   - Added extension settings
